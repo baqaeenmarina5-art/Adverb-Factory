@@ -1,0 +1,303 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Past Simple Trail</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@500;600&family=Nunito:wght@500;700;800&family=Tajawal:wght@500;700&display=swap">
+<style>
+/* Layout: a marked-up exercise notebook. Ruled sheet, red-pen ticks and circles, highlighter on time words. */
+:root{
+  --paper:#f5f7f1; --sheet:#ffffff; --ink:#1c2b43; --muted:#5d6b80; --rule:#cfdeea;
+  --red:#d3283f; --hi:#ffe45c; --good:#1c8559; --goodbg:#dff3e8; --badbg:#fde3e6; --accent:#2f6fd6; --accentink:#ffffff;
+  --display:'Fredoka','Trebuchet MS',sans-serif; --body:'Nunito','Segoe UI',system-ui,sans-serif; --hand:'Caveat','Comic Sans MS',cursive; --ar:'Tajawal','Segoe UI',Tahoma,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121a2a; --sheet:#1b2740; --ink:#e9eef8; --muted:#9db0cc; --rule:#2d3f5f;
+  --red:#ff6b7d; --hi:#8a7a1d; --good:#5fd39b; --goodbg:#17392c; --badbg:#43202a; --accent:#6aa3ff; --accentink:#0d1626; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121a2a; --sheet:#1b2740; --ink:#e9eef8; --muted:#9db0cc; --rule:#2d3f5f;
+  --red:#ff6b7d; --hi:#8a7a1d; --good:#5fd39b; --goodbg:#17392c; --badbg:#43202a; --accent:#6aa3ff; --accentink:#0d1626; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;
+  padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+h1 small{display:block;font-family:var(--hand);font-size:24px;color:var(--red);font-weight:700;margin-bottom:2px}
+.stars{font-family:var(--display);font-size:18px;background:var(--sheet);border:2px solid var(--ink);border-radius:999px;padding:4px 14px;white-space:nowrap}
+.stars b{color:var(--red)}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+nav button{font:700 15px var(--body);border:2px solid var(--ink);background:var(--sheet);color:var(--ink);border-radius:12px;padding:10px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+nav button span{font-family:var(--hand);font-size:20px;color:var(--red);line-height:1}
+nav button[aria-current="true"]{background:var(--ink);color:var(--paper)}
+nav button[aria-current="true"] span{color:var(--hi)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sheet{position:relative;background:var(--sheet);border:2px solid var(--ink);border-radius:6px;padding:24px 20px 24px 44px;
+  background-image:repeating-linear-gradient(to bottom,transparent 0 33px,var(--rule) 33px 34px);box-shadow:5px 5px 0 var(--ink)}
+.sheet::before{content:"";position:absolute;left:30px;top:0;bottom:0;width:2px;background:var(--red);opacity:.55}
+.sheet>*+*{margin-top:18px}
+h2{font-family:var(--display);font-weight:600;font-size:24px;margin:0;line-height:1.2}
+h3{font-family:var(--display);font-weight:500;font-size:19px;margin:0}
+p{margin:0}
+.ar{font-family:var(--ar);direction:rtl;text-align:right;color:var(--muted);font-size:16px}
+mark{background:linear-gradient(transparent 12%,var(--hi) 12%,var(--hi) 92%,transparent 92%);color:inherit;padding:0 3px;border-radius:2px;font-weight:800}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{background:var(--paper);border:2px solid var(--ink);border-radius:10px;padding:12px 14px;min-width:0}
+.card h3{margin-bottom:4px}
+.eg{font-weight:800}
+.eg i{font-style:normal;color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:700 16px var(--body);border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--hi);color:#1c2b43}
+.reveal{min-height:3.2em;background:var(--paper);border:2px dashed var(--muted);border-radius:10px;padding:10px 14px}
+.bank{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.flip{font:700 16px var(--body);border:2px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink);padding:8px 6px;cursor:pointer;min-height:44px}
+.flip[aria-pressed="true"]{background:var(--ink);color:var(--hi)}
+.btn{font:700 17px var(--display);background:var(--accent);color:var(--accentink);border:2px solid var(--ink);border-radius:12px;padding:10px 22px;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.ghost{background:var(--sheet);color:var(--ink)}
+.btn[disabled]{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.bar{height:12px;border:2px solid var(--ink);border-radius:999px;background:var(--paper);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.meta{display:flex;justify-content:space-between;gap:10px;font-weight:800;color:var(--muted);font-size:15px}
+.q{font-size:clamp(20px,4.4vw,26px);line-height:1.6;font-weight:700}
+.gap{display:inline-block;min-width:96px;border-bottom:3px solid var(--ink);text-align:center;font-family:var(--hand);font-size:1.25em;color:var(--red);line-height:1.1;padding:0 6px}
+.base{font-family:var(--body);color:var(--muted);font-weight:700;font-size:.8em}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.opt{font:800 20px var(--body);border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:12px;padding:12px 8px;cursor:pointer;min-width:0;position:relative}
+.opt.ok{background:var(--goodbg);border-color:var(--good)}
+.opt.no{background:var(--badbg);border-color:var(--red);text-decoration:line-through}
+.opt.circle{outline:3px solid var(--red);outline-offset:3px;border-radius:50%/60%}
+.fb{font-family:var(--hand);font-size:30px;font-weight:700;line-height:1.1;min-height:36px}
+.fb.good{color:var(--good)} .fb.bad{color:var(--red)}
+.tick{font-family:var(--hand);color:var(--red);font-size:1.3em;font-weight:700}
+.pool,.ans{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:8px;border-radius:10px}
+.ans{background:var(--paper);border:2px dashed var(--muted)}
+.w{font:800 18px var(--body);border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
+.ans .w{background:var(--hi);color:#1c2b43}
+input.type{font:800 22px var(--body);width:100%;max-width:260px;border:2px solid var(--ink);border-radius:10px;padding:10px 12px;background:var(--paper);color:var(--ink)}
+.result{text-align:center}
+.big{font-family:var(--display);font-size:56px;line-height:1;margin:0}
+.review{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.review li{background:var(--paper);border-radius:8px;padding:6px 10px;border-left:6px solid var(--red);font-weight:700}
+.review li.g{border-left-color:var(--good)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:480px){.sheet{padding:18px 14px 18px 38px}.sheet::before{left:26px}}
+</style>
+<div class="wrap">
+  <header>
+    <h1><small>Grade 5 · Page 48 verbs</small>Past Simple Trail</h1>
+    <div class="stars" id="stars" aria-live="polite"></div>
+  </header>
+  <nav id="nav"></nav>
+  <main class="sheet" id="view"></main>
+</div>
+<script>
+(function(){
+var DATA=[
+["be","were","Yesterday, my friends ___ at school.","Yesterday",["were","was","are"]],
+["buy","bought","Mum ___ some fresh bread yesterday morning.","yesterday morning"],
+["do","did","Lina ___ her homework last night.","last night"],
+["drink","drank","My brother ___ a glass of orange juice this morning.","this morning"],
+["drive","drove","Dad ___ us to the park last Friday.","last Friday"],
+["eat","ate","We ___ rice and chicken for lunch yesterday.","yesterday"],
+["find","found","Sami ___ his lost pencil two days ago.","two days ago"],
+["get","got","I ___ up early on Monday.","on Monday"],
+["give","gave","The teacher ___ us a new book last week.","last week"],
+["go","went","Our class ___ to the library yesterday.","yesterday"],
+["have","had","She ___ a birthday party last Saturday.","last Saturday"],
+["hold","held","The little girl ___ her mother's hand yesterday.","yesterday"],
+["keep","kept","Ali ___ the secret last month.","last month"],
+["know","knew","I ___ the answer yesterday.","yesterday"],
+["lose","lost","Rana ___ her blue bag two days ago.","two days ago"],
+["make","made","We ___ a big cake for Grandma last night.","last night"],
+["put","put","He ___ his books in his school bag this morning.","this morning"],
+["ride","rode","Yousef ___ his bike to school yesterday.","yesterday"],
+["run","ran","The boys ___ fast in the race last week.","last week"],
+["see","saw","I ___ a beautiful bird in the garden yesterday morning.","yesterday morning"],
+["sell","sold","The farmer ___ fresh tomatoes at the market last Friday.","last Friday"],
+["send","sent","Dad ___ a message to my teacher two days ago.","two days ago"],
+["sing","sang","The students ___ a song at the party last month.","last month"],
+["sleep","slept","The baby ___ for two hours last night.","last night"],
+["stand","stood","We ___ in a line outside the classroom this morning.","this morning"],
+["take","took","Maya ___ a photo of the old castle last summer.","last summer"],
+["tell","told","Grandpa ___ us a funny story last night.","last night"],
+["throw","threw","Omar ___ the ball to his friend yesterday.","yesterday"],
+["wear","wore","She ___ a red dress to the wedding last week.","last week"],
+["win","won","Our team ___ the football match on Saturday.","on Saturday"],
+["write","wrote","Dad ___ a short note two days ago.","two days ago"]
+].map(function(d){return {v:d[0],a:d[1],t:d[2],sig:d[3],o:d[4]};});
+var SIGNALS=[
+["yesterday","أمس","I ate an apple yesterday."],
+["last night","الليلة الماضية","We watched a film last night."],
+["last week / month / year","الأسبوع / الشهر / السنة الماضية","She went to Irbid last week."],
+["last Friday / last summer","الجمعة / الصيف الماضي","He wore a hat last summer."],
+["two days ago","قبل يومين","I saw Ali two days ago."],
+["on Monday","يوم الاثنين (الماضي)","They won the game on Monday."],
+["this morning","هذا الصباح (انتهى)","I drank milk this morning."],
+["in 2020","في عام 2020","I started school in 2020."]
+];
+var ORDER_IDX=[1,4,9,17,23,28];
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function edForm(v){if(/e$/.test(v))return v+"d";if(/[^aeiou]y$/.test(v))return v.slice(0,-1)+"ied";return v+"ed"}
+function options(it){if(it.o)return shuffle(it.o);var base=it.v===it.a?it.v+"s":it.v;return shuffle([it.a,base,edForm(it.v)])}
+function hl(text,sig){var i=text.indexOf(sig);if(i<0)return esc(text);return esc(text.slice(0,i))+"<mark>"+esc(sig)+"</mark>"+esc(text.slice(i+sig.length))}
+function sentenceWithGap(it,fill,cls){return hl(it.t,it.sig).replace("___",'<span class="gap">'+(fill?esc(fill):"&nbsp;")+'</span>')}
+
+var stars={order:0,pick:0,test:0};
+try{var sv=JSON.parse(localStorage.getItem("pastTrailStars")||"null");if(sv){stars.order=sv.order|0;stars.pick=sv.pick|0;stars.test=sv.test|0}}catch(e){}
+function save(){try{localStorage.setItem("pastTrailStars",JSON.stringify(stars))}catch(e){}}
+function rate(p){return p>=.9?3:p>=.7?2:1}
+function starsText(n){return "★".repeat(n)+"☆".repeat(3-n)}
+function renderStars(){var t=stars.order+stars.pick+stars.test;$("#stars").innerHTML="Stars <b>"+t+"</b> / 9"}
+
+var TABS=[["learn","Learn","1"],["order","Word order","2"],["pick","Pick the verb","3"],["test","Final test","4"]];
+var cur="learn";
+function renderNav(){$("#nav").innerHTML=TABS.map(function(t){return '<button type="button" data-tab="'+t[0]+'" aria-current="'+(t[0]===cur)+'"><span>'+t[2]+'</span>'+t[1]+'</button>'}).join("")}
+function go(t){cur=t;renderNav();({learn:learn,order:order,pick:pick,test:test})[t]();}
+
+/* ---------- 1. Learn ---------- */
+function learn(){
+  $("#view").innerHTML=
+  '<h2>The rule</h2>'+
+  '<p>We use the <mark>past simple</mark> for actions that started and finished in the past.</p>'+
+  '<p class="ar">نستخدم الماضي البسيط للأحداث التي بدأت وانتهت في الماضي.</p>'+
+  '<div class="cards">'+
+    '<div class="card"><h3>Regular verbs</h3><p>Add <b>-ed</b>.</p><p class="eg">play → play<i>ed</i><br>walk → walk<i>ed</i></p></div>'+
+    '<div class="card"><h3>Irregular verbs</h3><p>The word changes. Learn it!</p><p class="eg">go → <i>went</i><br>eat → <i>ate</i></p></div>'+
+    '<div class="card"><h3>Verb be</h3><p><b>was</b>: I, he, she, it<br><b>were</b>: you, we, they</p><p class="eg">I <i>was</i> · We <i>were</i></p></div>'+
+  '</div>'+
+  '<h2>Time words</h2>'+
+  '<p>These words tell you to use the past simple. Tap one.</p>'+
+  '<div class="chips" id="sigs">'+SIGNALS.map(function(s,i){return '<button type="button" class="chip" data-sig="'+i+'" aria-pressed="false">'+esc(s[0])+'</button>'}).join("")+'</div>'+
+  '<div class="reveal" id="sigout" aria-live="polite"><span class="base">Tap a time word to see its meaning and an example.</span></div>'+
+  '<h2>Verb bank</h2>'+
+  '<p>Tap a verb to flip it. <span class="ar" style="display:inline">اضغط على الفعل لترى الماضي</span></p>'+
+  '<div class="bank">'+DATA.map(function(d,i){return '<button type="button" class="flip" data-flip="'+i+'" aria-pressed="false">'+d.v+'</button>'}).join("")+'</div>'+
+  '<div class="row"><button type="button" class="btn" data-tab="order">Start practice →</button></div>';
+}
+
+/* ---------- 2. Word order ---------- */
+var O={i:0,items:[],pool:[],ans:[],done:false,correct:0};
+function order(reset){
+  if(reset!==false||!O.items.length){O.items=shuffle(ORDER_IDX).map(function(i){return DATA[i]});O.i=0;O.correct=0;}
+  startOrderItem();
+}
+function startOrderItem(){
+  var it=O.items[O.i],full=it.t.replace("___",it.a),words=full.split(" ");
+  var tokens=words.map(function(w,k){return {w:w,k:k}});
+  var sh=shuffle(tokens);if(sh.map(function(x){return x.k}).join()===tokens.map(function(x){return x.k}).join())sh=sh.reverse();
+  O.pool=sh;O.ans=[];O.done=false;O.target=full;drawOrder();
+}
+function drawOrder(msg,cls){
+  var n=O.items.length;
+  if(O.i>=n){
+    var s=rate(O.correct/n);stars.order=Math.max(stars.order,s);save();renderStars();
+    $("#view").innerHTML='<div class="result"><h2>Word order done</h2><p class="big">'+O.correct+' / '+n+'</p><p class="fb good">'+starsText(s)+'</p><div class="row" style="justify-content:center"><button type="button" class="btn ghost" data-act="order-again">Play again</button><button type="button" class="btn" data-tab="pick">Next: pick the verb →</button></div></div>';
+    return;
+  }
+  $("#view").innerHTML=
+  '<div class="meta"><span>Sentence '+(O.i+1)+' of '+n+'</span><span>Correct '+O.correct+'</span></div>'+
+  '<div class="bar"><i style="width:'+(O.i/n*100)+'%"></i></div>'+
+  '<h2>Put the words in order</h2>'+
+  '<p class="ar">رتّب الكلمات لتكوّن جملة في الماضي البسيط.</p>'+
+  '<div class="ans" id="ans" aria-label="Your sentence">'+O.ans.map(function(x){return '<button type="button" class="w" data-un="'+x.k+'">'+esc(x.w)+'</button>'}).join("")+'</div>'+
+  '<div class="pool" id="pool">'+O.pool.map(function(x){return '<button type="button" class="w" data-w="'+x.k+'">'+esc(x.w)+'</button>'}).join("")+'</div>'+
+  '<div class="fb '+(cls||"")+'" aria-live="polite">'+(msg||"")+'</div>'+
+  '<div class="row">'+(O.done?'<button type="button" class="btn" data-act="order-next">Next →</button>':'<button type="button" class="btn" data-act="order-check"'+(O.pool.length?" disabled":"")+'>Check</button><button type="button" class="btn ghost" data-act="order-clear">Clear</button>')+'</div>';
+}
+
+/* ---------- 3. Pick the verb ---------- */
+var P={items:[],i:0,score:0,answered:false,opts:[]};
+function pick(){P.items=shuffle(DATA);P.i=0;P.score=0;nextPick();}
+function nextPick(){P.answered=false;if(P.i<P.items.length)P.opts=options(P.items[P.i]);drawPick();}
+function drawPick(chosen){
+  var n=P.items.length;
+  if(P.i>=n){
+    var s=rate(P.score/n);stars.pick=Math.max(stars.pick,s);save();renderStars();
+    $("#view").innerHTML='<div class="result"><h2>All 31 verbs done</h2><p class="big">'+P.score+' / '+n+'</p><p class="fb good">'+starsText(s)+'</p><div class="row" style="justify-content:center"><button type="button" class="btn ghost" data-act="pick-again">Play again</button><button type="button" class="btn" data-tab="test">Next: final test →</button></div></div>';
+    return;
+  }
+  var it=P.items[P.i];
+  var fillText=P.answered?it.a:"";
+  $("#view").innerHTML=
+  '<div class="meta"><span>Question '+(P.i+1)+' of '+n+'</span><span>Score '+P.score+'</span></div>'+
+  '<div class="bar"><i style="width:'+(P.i/n*100)+'%"></i></div>'+
+  '<p class="q">'+sentenceWithGap(it,fillText)+' <span class="base">('+esc(it.v)+')</span></p>'+
+  '<div class="opts">'+P.opts.map(function(o){
+    var c="";if(P.answered){if(o===it.a)c=(chosen===it.a)?"ok":"circle";else if(o===chosen)c="no"}
+    return '<button type="button" class="opt '+c+'" data-opt="'+esc(o)+'"'+(P.answered?" disabled":"")+'>'+esc(o)+(P.answered&&o===chosen&&o===it.a?' <span class="tick">✓</span>':'')+'</button>'}).join("")+'</div>'+
+  '<div class="fb '+(P.answered?(chosen===it.a?"good":"bad"):"")+'" aria-live="polite">'+(P.answered?(chosen===it.a?"Well done!":"Not quite. "+esc(it.v)+" → "+esc(it.a)):"")+'</div>'+
+  '<div class="row">'+(P.answered?'<button type="button" class="btn" data-act="pick-next">'+(P.i+1<n?"Next →":"Finish")+'</button>':'<span class="base">Look at the yellow time word.</span>')+'</div>';
+}
+
+/* ---------- 4. Final test ---------- */
+var T={items:[],i:0,score:0,answered:false,log:[]};
+function test(){T.items=shuffle(DATA).slice(0,10);T.i=0;T.score=0;T.answered=false;T.log=[];drawTest();}
+function drawTest(res){
+  var n=T.items.length;
+  if(T.i>=n){
+    var s=rate(T.score/n);stars.test=Math.max(stars.test,s);save();renderStars();
+    $("#view").innerHTML='<div class="result"><h2>Final test</h2><p class="big">'+T.score+' / '+n+'</p><p class="fb good">'+starsText(s)+'</p></div>'+
+    '<ul class="review">'+T.log.map(function(l){return '<li class="'+(l.ok?"g":"")+'">'+(l.ok?'<span class="tick">✓</span> ':'')+esc(l.it.t.replace("___",l.it.a))+(l.ok?"":' <span class="base">You wrote: '+esc(l.typed||"nothing")+'</span>')+'</li>'}).join("")+'</ul>'+
+    '<div class="row" style="justify-content:center"><button type="button" class="btn" data-act="test-again">Try 10 new verbs</button></div>';
+    return;
+  }
+  var it=T.items[T.i];
+  $("#view").innerHTML=
+  '<div class="meta"><span>Test '+(T.i+1)+' of '+n+'</span><span>Score '+T.score+'</span></div>'+
+  '<div class="bar"><i style="width:'+(T.i/n*100)+'%"></i></div>'+
+  '<h2>Write the past simple</h2>'+
+  '<p class="q">'+sentenceWithGap(it,T.answered?it.a:"")+' <span class="base">('+esc(it.v)+')</span></p>'+
+  '<div class="row"><input class="type" id="ti" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Past simple of '+esc(it.v)+'"'+(T.answered?" disabled":"")+'>'+
+  (T.answered?'<button type="button" class="btn" data-act="test-next">'+(T.i+1<n?"Next →":"See result")+'</button>':'<button type="button" class="btn" data-act="test-check">Check</button>')+'</div>'+
+  '<div class="fb '+(res?(res.ok?"good":"bad"):"")+'" aria-live="polite">'+(res?(res.ok?"✓ Well done!":"The answer is "+esc(it.a)):"")+'</div>';
+  var ti=$("#ti");if(ti&&!T.answered)ti.focus();
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",function(e){
+  var el=e.target.closest("button");if(!el)return;
+  var d=el.dataset;
+  if(d.tab){go(d.tab);return}
+  if(d.sig!==undefined){
+    document.querySelectorAll("[data-sig]").forEach(function(b){b.setAttribute("aria-pressed",String(b===el))});
+    var s=SIGNALS[+d.sig];$("#sigout").innerHTML='<b>'+esc(s[0])+'</b> <span class="ar" style="display:inline">'+esc(s[1])+'</span><br><span class="eg">'+esc(s[2])+'</span>';return}
+  if(d.flip!==undefined){
+    var x=DATA[+d.flip],on=el.getAttribute("aria-pressed")==="true";
+    el.setAttribute("aria-pressed",String(!on));el.textContent=on?x.v:(x.v===x.a?x.a:x.a)+(x.v==="be"?" (was)":"");
+    if(x.v==="be"&&!on)el.textContent="was / were";return}
+  if(d.w!==undefined&&cur==="order"){
+    var k=+d.w,idx=O.pool.findIndex(function(p){return p.k===k});var tk=O.pool.splice(idx,1)[0];O.ans.push(tk);drawOrder();return}
+  if(d.un!==undefined&&cur==="order"){
+    var k2=+d.un,i2=O.ans.findIndex(function(p){return p.k===k2});var t2=O.ans.splice(i2,1)[0];O.pool.push(t2);drawOrder();return}
+  if(d.opt!==undefined&&cur==="pick"&&!P.answered){
+    P.answered=true;if(d.opt===P.items[P.i].a)P.score++;drawPick(d.opt);return}
+  switch(d.act){
+    case "order-clear":O.pool=O.pool.concat(O.ans);O.ans=[];drawOrder();break;
+    case "order-check":
+      var typed=O.ans.map(function(x){return x.w}).join(" ");
+      if(typed===O.target){O.correct++;O.done=true;drawOrder('<span class="tick">✓</span> Well done!',"good")}
+      else{O.pool=O.pool.concat(O.ans);O.ans=[];drawOrder("Try again. Does it start with a capital letter?","bad")}
+      break;
+    case "order-next":O.i++;if(O.i<O.items.length)startOrderItem();else drawOrder();break;
+    case "order-again":order(true);break;
+    case "pick-next":P.i++;nextPick();break;
+    case "pick-again":pick();break;
+    case "test-check":checkTest();break;
+    case "test-next":T.i++;T.answered=false;drawTest();break;
+    case "test-again":test();break;
+  }
+});
+document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.id==="ti"&&!T.answered)checkTest()});
+function checkTest(){
+  var ti=$("#ti");if(!ti)return;var typed=ti.value.trim(),it=T.items[T.i];
+  var ok=typed.toLowerCase()===it.a.toLowerCase();if(ok)T.score++;
+  T.log.push({it:it,ok:ok,typed:typed});T.answered=true;drawTest({ok:ok});
+}
+renderStars();go("learn");
+})();
+</script>
+
+</body></html>
