@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adverb Factory</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&family=Fredoka:wght@500;600&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: a one-column workshop line. A sticky header carries the progress pips and score; one card at a time sits below it.
+   The yellow "-ly" suffix tile is the signature: it snaps onto the adjective tile in every level. */
+:root{
+  --bg:#EAF0F7; --surface:#FFFFFF; --ink:#12233D; --muted:#566783; --line:#C9D5E4;
+  --accent:#2D5BFF; --accent-ink:#FFFFFF; --suffix:#FFC83D; --suffix-ink:#3A2A00;
+  --good:#12704F; --good-bg:#DCF4E9; --bad:#B42318; --bad-bg:#FDE4E1; --tile:#F3F6FB;
+  --font-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1729; --surface:#172440; --ink:#EAF0FA; --muted:#9DB0CE; --line:#2B3C5E;
+    --accent:#7C9BFF; --accent-ink:#0E1729; --suffix:#FFC83D; --suffix-ink:#2A1E00;
+    --good:#59D6A3; --good-bg:#12362B; --bad:#FF8A7E; --bad-bg:#3C1A1A; --tile:#1D2C4B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1729; --surface:#172440; --ink:#EAF0FA; --muted:#9DB0CE; --line:#2B3C5E;
+  --accent:#7C9BFF; --accent-ink:#0E1729; --suffix:#FFC83D; --suffix-ink:#2A1E00;
+  --good:#59D6A3; --good-bg:#12362B; --bad:#FF8A7E; --bad-bg:#3C1A1A; --tile:#1D2C4B;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:17px; line-height:1.5;
+  padding-block:0 40px; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:720px;margin:0 auto}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 10px}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:600;font-size:1.15rem}
+.score{font-family:var(--font-mono);font-size:.95rem;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 14px;font-variant-numeric:tabular-nums}
+.pips{display:flex;gap:6px;margin-top:10px}
+.pip{flex:1;height:8px;border-radius:4px;background:var(--line)}
+.pip.done{background:var(--accent)}
+.pip.now{background:var(--suffix)}
+
+/* tiles */
+.tile{display:inline-flex;align-items:center;font-family:var(--font-mono);font-weight:500;border-radius:8px;padding:2px 10px;background:var(--tile);border:1px solid var(--line);color:var(--ink)}
+.tile.suffix{background:var(--suffix);border-color:var(--suffix);color:var(--suffix-ink)}
+.tile.cut{color:var(--bad);text-decoration:line-through;background:var(--bad-bg);border-color:transparent}
+.logo{display:inline-flex}
+.logo .tile{font-size:.95rem;padding:1px 8px}
+.logo .tile:first-child{border-radius:8px 0 0 8px}
+.logo .tile.suffix{border-radius:0 8px 8px 0}
+
+h1,h2,h3{font-family:var(--font-display);font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,7vw,2.9rem)}
+h2{font-size:1.45rem}
+h3{font-size:1.1rem}
+p{margin:0}
+.eyebrow{font-family:var(--font-mono);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.lead{font-size:1.1rem;max-width:60ch}
+.eg{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:baseline}
+.eg .lab{font-family:var(--font-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.hl-adj{background:var(--tile);border-bottom:3px solid var(--accent);padding:0 4px;font-weight:800}
+.hl-adv{background:var(--suffix);color:var(--suffix-ink);padding:0 4px;border-radius:4px;font-weight:800}
+
+/* converter */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;font-family:var(--font-mono);font-size:.95rem}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.conv{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:1.5rem;min-height:3.2rem}
+.conv .eq{color:var(--muted);padding-inline:6px}
+.conv .res{font-family:var(--font-display);font-weight:600}
+.note{color:var(--muted)}
+
+/* rules */
+.rules{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.rule{display:grid;grid-template-columns:minmax(0,9.5rem) minmax(0,1fr);gap:4px 14px;padding:10px 0;border-top:1px solid var(--line)}
+.rule:first-child{border-top:0}
+.rule b{font-family:var(--font-display);font-weight:500}
+.rule .ex{color:var(--muted);font-family:var(--font-mono);font-size:.9rem}
+@media (max-width:480px){.rule{grid-template-columns:1fr}}
+
+/* buttons */
+.btn{border:0;border-radius:12px;padding:12px 22px;background:var(--accent);color:var(--accent-ink);font-weight:800;cursor:pointer;font-size:1rem}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+
+/* questions */
+.qmeta{display:flex;justify-content:space-between;gap:10px;font-family:var(--font-mono);font-size:.82rem;color:var(--muted);letter-spacing:.04em}
+.prompt{font-family:var(--font-display);font-size:1.25rem}
+.sentence{font-size:1.3rem;line-height:2.1;max-width:60ch}
+.ans-in{font-family:var(--font-mono);font-size:1.1rem;width:min(11rem,60vw);border:2px solid var(--line);border-radius:10px;padding:4px 10px;background:var(--surface);color:var(--ink)}
+.ans-in:focus{border-color:var(--accent);outline:none}
+.big-in{width:min(16rem,100%);font-size:1.3rem;padding:8px 12px}
+.adjtile{font-size:1.6rem;padding:6px 16px}
+.make{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.blank{display:inline-block;min-width:5.5rem;border-bottom:3px solid var(--accent);text-align:center;font-weight:800;line-height:1.4}
+.blank.ok{color:var(--good);border-color:var(--good)}
+.opts{display:flex;flex-wrap:wrap;gap:10px}
+.opt{border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 20px;font-family:var(--font-mono);font-size:1.05rem;cursor:pointer}
+.opt:hover:not([disabled]){border-color:var(--accent)}
+.opt.good{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.opt.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.opt.used{opacity:.4;text-decoration:line-through}
+.opt[disabled]{cursor:default}
+.fb{min-height:1.6em;border-radius:12px;padding:0;font-weight:700}
+.fb.show{padding:10px 14px}
+.fb.good{background:var(--good-bg);color:var(--good)}
+.fb.bad{background:var(--bad-bg);color:var(--bad)}
+.fb.info{background:var(--tile);color:var(--ink)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+details.help{border:1px dashed var(--line);border-radius:12px;padding:8px 14px}
+details.help summary{cursor:pointer;font-weight:800;color:var(--muted)}
+details.help ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.95rem}
+
+/* ordering */
+.line{min-height:4rem;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:2px dashed var(--line);border-radius:12px;padding:10px}
+.line .ph{color:var(--muted)}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.word{border:2px solid var(--line);background:var(--tile);border-radius:10px;padding:8px 14px;font-size:1.1rem;font-weight:700;cursor:pointer}
+.word.placed{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.word[disabled]{cursor:default}
+.line.good{border-color:var(--good);background:var(--good-bg)}
+.line.bad{border-color:var(--bad)}
+
+/* final */
+.stars{font-family:var(--font-display);font-size:2.4rem;letter-spacing:.2em}
+.big{font-family:var(--font-display);font-size:3rem;font-weight:600;font-variant-numeric:tabular-nums}
+.lvlrow{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.lvlrow:first-child{border-top:0}
+
+@media (prefers-reduced-motion:reduce){.shake{animation:none}*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="top-row">
+      <div class="brand"><span class="logo" aria-hidden="true"><span class="tile">quick</span><span class="tile suffix">ly</span></span> Adverb Factory</div>
+      <div class="score" id="score" aria-live="polite">0 pts</div>
+    </div>
+    <div class="pips" id="pips" aria-hidden="true"></div>
+  </header>
+  <main id="app" class="stack"></main>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var RULES={
+  1:{t:"Add -ly",d:"Most adjectives just take -ly."},
+  2:{t:"Ends in -y",d:"Change the y to i, then add -ly."},
+  3:{t:"Ends in -le",d:"Drop the e and add y."},
+  4:{t:"Ends in -ic",d:"Add -ally."},
+  5:{t:"Ends in -ful",d:"Keep the l and add -ly."},
+  6:{t:"Irregular",d:"These adverbs are special: good becomes well; fast, hard, late and early stay the same."}
+};
+
+var RULE_ROWS=[
+  {r:1,name:"Most adjectives",how:"add -ly",ex:"slow → slowly · quiet → quietly · loud → loudly"},
+  {r:2,name:"Ends in -y",how:"y → i, then add -ly",ex:"happy → happily · easy → easily · angry → angrily"},
+  {r:3,name:"Ends in -le",how:"drop e, add -y",ex:"gentle → gently · simple → simply · terrible → terribly"},
+  {r:4,name:"Ends in -ic",how:"add -ally",ex:"basic → basically · tragic → tragically"},
+  {r:5,name:"Ends in -ful",how:"keep l, add -ly",ex:"careful → carefully · beautiful → beautifully"},
+  {r:6,name:"Irregular",how:"learn them",ex:"good → well · fast → fast · hard → hard · late → late · early → early"}
+];
+
+var CONV=[
+  {adj:"quiet",keep:"quiet",cut:"",add:"ly",res:"quietly",r:1},
+  {adj:"happy",keep:"happ",cut:"y",add:"ily",res:"happily",r:2},
+  {adj:"gentle",keep:"gentl",cut:"e",add:"y",res:"gently",r:3},
+  {adj:"basic",keep:"basic",cut:"",add:"ally",res:"basically",r:4},
+  {adj:"careful",keep:"careful",cut:"",add:"ly",res:"carefully",r:5},
+  {adj:"good",irregular:true,res:"well",r:6}
+];
+
+var LEVELS=[
+  {name:"Write the adverb",type:"type",intro:"Change each adjective into an adverb. Use the rules to help you.",items:[
+    {adj:"quick",ans:["quickly"],r:1},{adj:"careful",ans:["carefully"],r:5},{adj:"happy",ans:["happily"],r:2},
+    {adj:"gentle",ans:["gently"],r:3},{adj:"angry",ans:["angrily"],r:2},{adj:"loud",ans:["loudly"],r:1},
+    {adj:"easy",ans:["easily"],r:2},{adj:"simple",ans:["simply"],r:3},{adj:"basic",ans:["basically"],r:4},
+    {adj:"polite",ans:["politely"],r:1}
+  ]},
+  {name:"Complete the sentences",type:"fill",intro:"Type the adverb form of the adjective in brackets.",items:[
+    {a:"The students listened ",b:" to the teacher.",adj:"quiet",ans:["quietly"],r:1},
+    {a:"Sara walked ",b:" across the icy road.",adj:"careful",ans:["carefully"],r:5},
+    {a:"The children played ",b:" in the garden.",adj:"happy",ans:["happily"],r:2},
+    {a:"My brother solved the math problem ",b:".",adj:"easy",ans:["easily"],r:2},
+    {a:"The baby smiled ",b:" at her mother.",adj:"sweet",ans:["sweetly"],r:1},
+    {a:"Please close the door ",b:".",adj:"gentle",ans:["gently"],r:3},
+    {a:"The team played ",b:" and won the match.",adj:"brave",ans:["bravely"],r:1},
+    {a:"He answered the question ",b:".",adj:"correct",ans:["correctly"],r:1}
+  ]},
+  {name:"Adjective or adverb?",type:"choice",intro:"Use an adjective to describe a noun. Use an adverb to describe a verb. Tap the correct word.",items:[
+    {a:"The bus driver is very ",b:".",o:["careful","carefully"],ans:"careful",why:"Very describes the driver (a noun), so we need an adjective."},
+    {a:"He drives ",b:".",o:["careful","carefully"],ans:"carefully",why:"It tells how he drives, so we need an adverb."},
+    {a:"Lina is a ",b:" learner.",o:["quick","quickly"],ans:"quick",why:"It describes the noun learner, so we need an adjective."},
+    {a:"Lina learns ",b:".",o:["quick","quickly"],ans:"quickly",why:"It tells how she learns, so we need an adverb."},
+    {a:"The soup smells ",b:".",o:["wonderful","wonderfully"],ans:"wonderful",why:"Smells is a linking verb here. It describes the soup, so we use an adjective."},
+    {a:"The band played ",b:" last night.",o:["wonderful","wonderfully"],ans:"wonderfully",why:"It tells how the band played, so we need an adverb."},
+    {a:"Our teacher speaks ",b:".",o:["clear","clearly"],ans:"clearly",why:"It tells how the teacher speaks, so we need an adverb."},
+    {a:"It was a ",b:" noise.",o:["loud","loudly"],ans:"loud",why:"It describes the noun noise, so we need an adjective."}
+  ]},
+  {name:"Irregular adverbs",type:"bank",intro:"Some adverbs break the rules. Pick the right word for each sentence. Each word is used once.",bank:["well","fast","hard","late","early"],items:[
+    {a:"Omar is a good singer. He sings very ",b:".",ans:"well"},
+    {a:"The train is a fast one. It travels ",b:".",ans:"fast"},
+    {a:"Rana is a hard worker. She works ",b:".",ans:"hard"},
+    {a:"The film started at nine. We arrived ",b:" and missed the beginning.",ans:"late"},
+    {a:"I woke up at five o'clock this morning. I got up ",b:".",ans:"early"}
+  ]},
+  {name:"Put the words in order",type:"order",intro:"Last level. Tap the words to build a correct sentence. Tap a word in your sentence to take it back.",items:[
+    {w:["The","students","listened","quietly","to","the","teacher"],ok:["The students listened quietly to the teacher"]},
+    {w:["Sara","walked","carefully","across","the","icy","road"],ok:["Sara walked carefully across the icy road"]},
+    {w:["My","brother","solved","the","math","problem","easily"],ok:["My brother solved the math problem easily","My brother easily solved the math problem"]},
+    {w:["Omar","sings","very","well"],ok:["Omar sings very well"]},
+    {w:["Rana","works","hard","every","day"],ok:["Rana works hard every day"]}
+  ]}
+];
+
+var MAX=0; LEVELS.forEach(function(l){MAX+=l.items.length*10;});
+
+var app=document.getElementById("app");
+var scoreEl=document.getElementById("score");
+var pipsEl=document.getElementById("pips");
+var S;
+
+function reset(){
+  S={screen:"learn",li:0,qi:0,score:0,att:0,done:false,used:[],placed:[],pool:[],
+     res:LEVELS.map(function(){return {pts:0,ok:0};}),convI:0};
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function norm(s){return String(s).trim().toLowerCase().replace(/\s+/g," ").replace(/[.!?]+$/,"");}
+function shuffle(a){
+  var b=a.map(function(_,i){return i;}),k,j,t;
+  var ident=function(){return b.every(function(v,i){return v===i;});};
+  do{
+    for(k=b.length-1;k>0;k--){j=Math.floor(Math.random()*(k+1));t=b[k];b[k]=b[j];b[j]=t;}
+  }while(b.length>1&&ident());
+  return b;
+}
+
+function updateTop(){
+  scoreEl.textContent=S.score+" pts";
+  var cur=S.screen==="learn"?0:(S.screen==="final"?LEVELS.length+1:S.li+1);
+  var html="";
+  for(var i=0;i<=LEVELS.length;i++){
+    var c=i<cur?"pip done":(i===cur?"pip now":"pip");
+    if(S.screen==="final")c="pip done";
+    html+='<span class="'+c+'"></span>';
+  }
+  pipsEl.innerHTML=html;
+}
+
+function rulesHelp(){
+  var li=RULE_ROWS.map(function(r){return "<li><b>"+esc(r.name)+":</b> "+esc(r.how)+" ("+esc(r.ex.split(" · ")[0])+")</li>";}).join("");
+  return '<details class="help"><summary>Need a hint? Open the rules</summary><ul>'+li+"</ul></details>";
+}
+
+/* ---------- screens ---------- */
+function renderLearn(){
+  var chips=CONV.map(function(c,i){
+    return '<button class="chip" type="button" data-i="'+i+'" aria-pressed="'+(i===S.convI)+'">'+esc(c.adj)+"</button>";
+  }).join("");
+  var rows=RULE_ROWS.map(function(r){
+    return '<li class="rule"><div><b>'+esc(r.name)+'</b><div class="note">'+esc(r.how)+'</div></div><div class="ex">'+esc(r.ex)+"</div></li>";
+  }).join("");
+  app.innerHTML=
+   '<section class="stack">'+
+     '<p class="eyebrow">Grade 6 English · Adverbs of manner</p>'+
+     '<h1>Turn adjectives into adverbs</h1>'+
+     '<p class="lead">An <b>adjective</b> describes a noun. An <b>adverb</b> describes a verb and tells us <b>how</b> something is done.</p>'+
+     '<div class="card"><div class="eg">'+
+       '<span class="lab">adjective</span><span>She is a <span class="hl-adj">quick</span> runner.</span>'+
+       '<span class="lab">adverb</span><span>She runs <span class="hl-adv">quickly</span>.</span>'+
+     '</div></div>'+
+   '</section>'+
+   '<section class="card"><h2>Try the machine</h2><p class="note">Pick an adjective and watch what changes.</p>'+
+     '<div class="chips" id="chips">'+chips+'</div><div class="conv" id="conv" aria-live="polite"></div><p class="note" id="convNote"></p></section>'+
+   '<section class="card"><h2>The rules</h2><ul class="rules">'+rows+'</ul></section>'+
+   '<div class="actions"><button class="btn" id="go" type="button">Start Level 1</button></div>';
+  drawConv();
+  document.getElementById("chips").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-i]"); if(!b)return;
+    S.convI=+b.getAttribute("data-i");
+    Array.prototype.forEach.call(this.children,function(c){c.setAttribute("aria-pressed",String(c===b));});
+    drawConv();
+  });
+  document.getElementById("go").addEventListener("click",function(){S.screen="intro";S.li=0;render();window.scrollTo(0,0);});
+}
+function drawConv(){
+  var c=CONV[S.convI],h;
+  if(c.irregular){
+    h='<span class="tile">'+esc(c.adj)+'</span><span class="eq">→</span><span class="tile suffix">'+esc(c.res)+"</span>";
+  }else{
+    h='<span class="tile">'+esc(c.keep)+"</span>"+(c.cut?'<span class="tile cut">'+esc(c.cut)+"</span>":"")+
+      '<span class="tile suffix">'+esc(c.add)+'</span><span class="eq">=</span><span class="res">'+esc(c.res)+"</span>";
+  }
+  document.getElementById("conv").innerHTML=h;
+  document.getElementById("convNote").textContent=RULES[c.r].t+". "+RULES[c.r].d;
+}
+
+function renderIntro(){
+  var L=LEVELS[S.li];
+  app.innerHTML=
+   '<section class="card"><p class="eyebrow">Level '+(S.li+1)+' of '+LEVELS.length+'</p>'+
+   '<h2>'+esc(L.name)+'</h2><p class="lead">'+esc(L.intro)+'</p>'+
+   '<p class="note">'+L.items.length+' questions. 10 points for a correct first try, 5 for a second try.</p>'+
+   '<div class="actions"><button class="btn" id="go" type="button">Start</button>'+
+   (S.li===0?'<button class="btn ghost" id="back" type="button">Back to the rules</button>':"")+'</div></section>';
+  document.getElementById("go").addEventListener("click",function(){S.screen="q";S.qi=0;startQ();});
+  var b=document.getElementById("back"); if(b)b.addEventListener("click",function(){S.screen="learn";render();});
+}
+
+function startQ(){
+  S.att=0;S.done=false;
+  if(LEVELS[S.li].type==="order"){
+    var w=LEVELS[S.li].items[S.qi].w; S.pool=shuffle(w); S.placed=[];
+  }
+  if(S.qi===0)S.used=[];
+  render();
+}
+
+function renderQ(){
+  var L=LEVELS[S.li],it=L.items[S.qi],body="",btn='<button class="btn" id="check" type="button">Check</button>';
+  var meta='<div class="qmeta"><span>LEVEL '+(S.li+1)+' · '+esc(L.name.toUpperCase())+'</span><span>'+(S.qi+1)+' / '+L.items.length+'</span></div>';
+  if(L.type==="type"){
+    body='<p class="prompt">Change the adjective into an adverb.</p>'+
+      '<div class="make"><span class="tile adjtile">'+esc(it.adj)+'</span><span class="tile suffix adjtile" aria-hidden="true">?</span></div>'+
+      '<input id="in" class="ans-in big-in" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Your adverb" placeholder="Type the adverb">';
+  }else if(L.type==="fill"){
+    body='<p class="prompt">Complete the sentence.</p><p class="sentence">'+esc(it.a)+
+      '<input id="in" class="ans-in" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Missing adverb">'+esc(it.b)+
+      ' <span class="tile">('+esc(it.adj)+')</span></p>';
+  }else if(L.type==="choice"||L.type==="bank"){
+    var opts=(L.type==="choice"?it.o:L.bank).map(function(o){
+      var used=L.type==="bank"&&S.used.indexOf(o)>-1;
+      return '<button class="opt'+(used?" used":"")+'" type="button" data-o="'+esc(o)+'"'+(used?" disabled":"")+'>'+esc(o)+"</button>";
+    }).join("");
+    body='<p class="prompt">'+(L.type==="choice"?"Tap the correct word.":"Pick the word that fits.")+'</p><p class="sentence">'+esc(it.a)+
+      '<span class="blank" id="blank">&nbsp;</span>'+esc(it.b)+'</p><div class="opts" id="opts">'+opts+"</div>";
+    btn="";
+  }else{
+    body='<p class="prompt">Put the words in the correct order.</p><div class="line" id="line"></div><div class="pool" id="pool"></div>';
+    btn='<button class="btn" id="check" type="button" disabled>Check</button><button class="btn ghost" id="clear" type="button">Start over</button>';
+  }
+  app.innerHTML='<section class="card">'+meta+body+'<div class="fb" id="fb" aria-live="polite"></div>'+
+    '<div class="actions" id="acts">'+btn+'</div>'+(L.type==="order"?"":rulesHelp())+'</section>';
+  wireQ();
+}
+
+/* ---------- question logic ---------- */
+function fb(kind,text){
+  var el=document.getElementById("fb");
+  el.className="fb show "+kind; el.textContent=text;
+}
+function shake(el){ if(!el)return; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+function award(){ var p=S.att===0?10:5; S.score+=p; S.res[S.li].pts+=p; S.res[S.li].ok++; updateTop(); return p; }
+function ruleLine(r){ return r?(" Rule: "+RULES[r].t+". "+RULES[r].d):""; }
+
+function finishQ(){
+  S.done=true;
+  var last=S.qi===LEVELS[S.li].items.length-1;
+  var acts=document.getElementById("acts");
+  acts.innerHTML='<button class="btn" id="next" type="button">'+(last?"Finish level":"Next")+"</button>";
+  var n=document.getElementById("next"); n.focus();
+  n.addEventListener("click",function(){
+    if(!last){S.qi++;startQ();}
+    else if(S.li<LEVELS.length-1){S.li++;S.screen="intro";render();}
+    else{S.screen="final";render();}
+    window.scrollTo(0,0);
+  });
+}
+
+function wireQ(){
+  var L=LEVELS[S.li],it=L.items[S.qi];
+  if(L.type==="type"||L.type==="fill"){
+    var inp=document.getElementById("in"); inp.focus();
+    var check=function(){
+      if(S.done)return;
+      var v=norm(inp.value); if(!v)return;
+      if(it.ans.indexOf(v)>-1){
+        var p=award(); inp.value=it.ans[0]; inp.disabled=true;
+        fb("good","Correct! +"+p+"."+ruleLine(it.r)); finishQ();
+      }else{
+        S.att++; shake(inp);
+        if(S.att===1){ fb("bad","Not quite. Try once more."+ruleLine(it.r)); inp.select(); }
+        else{ inp.value=it.ans[0]; inp.disabled=true; fb("info","The answer is "+it.ans[0]+"."+ruleLine(it.r)); finishQ(); }
+      }
+    };
+    document.getElementById("check").addEventListener("click",check);
+    inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); if(S.done){var n=document.getElementById("next"); if(n)n.click();} else check(); } });
+  }else if(L.type==="choice"||L.type==="bank"){
+    var opts=document.getElementById("opts"),blank=document.getElementById("blank");
+    opts.addEventListener("click",function(e){
+      var b=e.target.closest("button[data-o]"); if(!b||S.done||b.disabled)return;
+      var v=b.getAttribute("data-o");
+      if(v===it.ans){
+        var p=award(); b.classList.add("good"); blank.textContent=v; blank.classList.add("ok");
+        if(L.type==="bank")S.used.push(v);
+        Array.prototype.forEach.call(opts.children,function(o){o.disabled=true;});
+        fb("good","Correct! +"+p+"."+(it.why?" "+it.why:"")); finishQ();
+      }else{
+        S.att++; b.classList.add("bad"); b.disabled=true; shake(opts);
+        if(S.att===1){ fb("bad","Not quite. Try again."+(it.why?" Hint: look at the word the gap describes.":" Think about how the action is done.")); }
+        else{
+          Array.prototype.forEach.call(opts.children,function(o){
+            o.disabled=true; if(o.getAttribute("data-o")===it.ans)o.classList.add("good");
+          });
+          blank.textContent=it.ans; blank.classList.add("ok");
+          if(L.type==="bank")S.used.push(it.ans);
+          fb("info","The answer is "+it.ans+"."+(it.why?" "+it.why:"")); finishQ();
+        }
+      }
+    });
+  }else{
+    drawOrder();
+    document.getElementById("clear").addEventListener("click",function(){ if(S.done)return; S.placed=[]; drawOrder(); document.getElementById("fb").className="fb"; document.getElementById("fb").textContent=""; });
+    document.getElementById("check").addEventListener("click",function(){
+      if(S.done)return;
+      var s=norm(S.placed.map(function(i){return it.w[i];}).join(" "));
+      var okay=it.ok.some(function(o){return norm(o)===s;});
+      var line=document.getElementById("line");
+      if(okay){
+        var p=award(); line.classList.add("good"); fb("good","Perfect sentence! +"+p+"."); lockOrder(); finishQ();
+      }else{
+        S.att++; line.classList.add("bad"); shake(line);
+        if(S.att===1){ fb("bad","Not quite. Hint: the adverb usually comes right after the verb, or at the end."); setTimeout(function(){line.classList.remove("bad");},700); }
+        else{
+          S.placed=[]; var order=it.ok[0].split(" "); var used={};
+          order.forEach(function(wd){ for(var k=0;k<it.w.length;k++){ if(!used[k]&&norm(it.w[k])===norm(wd)){used[k]=1;S.placed.push(k);break;} } });
+          drawOrder(); lockOrder(); fb("info","The correct sentence is: "+it.ok[0]+"."); finishQ();
+        }
+      }
+    });
+  }
+}
+function lockOrder(){
+  S.done=true;
+  Array.prototype.forEach.call(document.querySelectorAll(".word"),function(w){w.disabled=true;});
+  var c=document.getElementById("check"); if(c)c.disabled=true;
+}
+function drawOrder(){
+  var it=LEVELS[S.li].items[S.qi],line=document.getElementById("line"),pool=document.getElementById("pool");
+  line.innerHTML=S.placed.length?S.placed.map(function(i){return '<button class="word placed" type="button" data-p="'+i+'">'+esc(it.w[i])+"</button>";}).join(""):'<span class="ph">Tap the words below</span>';
+  pool.innerHTML=S.pool.filter(function(i){return S.placed.indexOf(i)<0;}).map(function(i){return '<button class="word" type="button" data-w="'+i+'">'+esc(it.w[i])+"</button>";}).join("");
+  var c=document.getElementById("check"); if(c&&!S.done)c.disabled=S.placed.length!==it.w.length;
+  line.onclick=function(e){ var b=e.target.closest("button[data-p]"); if(!b||S.done)return; var i=+b.getAttribute("data-p"); S.placed=S.placed.filter(function(x){return x!==i;}); drawOrder(); };
+  pool.onclick=function(e){ var b=e.target.closest("button[data-w]"); if(!b||S.done)return; S.placed.push(+b.getAttribute("data-w")); drawOrder(); };
+}
+
+function renderFinal(){
+  var pct=Math.round(S.score/MAX*100),stars=pct>=85?3:(pct>=60?2:1);
+  var msg=pct>=85?"Excellent work. You know your adverbs.":(pct>=60?"Good job. Review the rules and try again for a higher score.":"Keep practising. Read the rules once more and play again.");
+  var rows=LEVELS.map(function(l,i){
+    return '<div class="lvlrow"><span>'+esc(l.name)+'</span><span>'+S.res[i].ok+" / "+l.items.length+" correct · "+S.res[i].pts+" pts</span></div>";
+  }).join("");
+  app.innerHTML='<section class="card"><p class="eyebrow">Game complete</p>'+
+    '<div class="stars" aria-label="'+stars+' out of 3 stars">'+"★".repeat(stars)+'<span style="opacity:.25">'+"★".repeat(3-stars)+"</span></div>"+
+    '<div class="big">'+S.score+' <span class="note" style="font-size:1.2rem">/ '+MAX+' pts</span></div>'+
+    '<p class="lead">'+esc(msg)+'</p><div>'+rows+'</div>'+
+    '<div class="actions"><button class="btn" id="again" type="button">Play again</button><button class="btn ghost" id="rules" type="button">Review the rules</button></div></section>';
+  document.getElementById("again").addEventListener("click",function(){reset();S.screen="intro";render();window.scrollTo(0,0);});
+  document.getElementById("rules").addEventListener("click",function(){reset();render();window.scrollTo(0,0);});
+}
+
+function render(){
+  updateTop();
+  if(S.screen==="learn")renderLearn();
+  else if(S.screen==="intro")renderIntro();
+  else if(S.screen==="q")renderQ();
+  else renderFinal();
+}
+
+reset(); render();
+})();
+</script>
+
+</body>
+</html>
